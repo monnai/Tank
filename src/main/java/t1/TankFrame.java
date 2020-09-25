@@ -54,7 +54,7 @@ public class TankFrame extends Frame {
    */
   private ArrayList<Bullet> bullets = new ArrayList<>();
 
-  ArrayList<Bullet> getBullets() {
+  public  ArrayList<Bullet> getBullets() {
     return bullets;
   }
 

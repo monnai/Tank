@@ -1,2 +1,4 @@
 tank.number=8
 tank.speed=5
+FourDirectFireStrategy=bulletstrategy.FourDirectFireStrategy
+DefaultFireStrategy=bulletstrategy.DefaultFireStrategy

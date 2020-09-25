@@ -40,11 +40,16 @@ public class Bullet {
    */
   private int x, y;
 
-  public Bullet(int x, int y, Direct direct, Group group) {
+  private TankFrame tf;
+
+  public Bullet(int x, int y, Direct direct, Group group, TankFrame tf) {
     this.x = x;
     this.y = y;
     this.direct = direct;
     this.group = group;
+    this.tf = tf;
+    //初始化时加入容器
+    this.tf.getBullets().add(this);
   }
 
   private Group group;
@@ -52,7 +57,7 @@ public class Bullet {
   /**
    * bullet碰撞检测图型
    */
-  private Rectangle rectangle = new Rectangle(WIDTH,HEIGHT);
+  private Rectangle rectangle = new Rectangle(WIDTH, HEIGHT);
 
 
   /**

@@ -1,10 +1,13 @@
 package t1;
 
+import bulletstrategy.DefaultFireStrategy;
+import bulletstrategy.FireStrategy;
+import bulletstrategy.FourDirectFireStrategy;
+import conf.TankConf;
 import entity.Bullet;
 import entity.ImgCache;
 import enums.Direct;
 import enums.Group;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -28,9 +31,31 @@ public class Tank {
     this.direct = direct;
     this.tf = tf;
     this.group = group;
+    if (this.group == Group.GOOD) {
+      String clazz = TankConf.getString("FourDirectFireStrategy");
+      try {
+        Class<?> fsClazz = Class.forName(clazz);
+        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class,TankFrame.class).newInstance(this,tf);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      String clazz = TankConf.getString("DefaultFireStrategy");
+      try {
+        Class<?> fsClazz = Class.forName(clazz);
+        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class,TankFrame.class).newInstance(this,tf);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   private TankFrame tf;
+  /**
+   * 发射子弹策略
+   */
+  private FireStrategy fs;
+
   /**
    * 初始横纵坐标
    */
@@ -59,11 +84,11 @@ public class Tank {
       WIDTH = ImgCache.dTank.getWidth(),
       HEIGHT = ImgCache.dTank.getHeight();
 
-  int getwidth() {
+  public int getwidth() {
     return this.WIDTH;
   }
 
-  int getheight() {
+  public int getheight() {
     return this.HEIGHT;
   }
 
@@ -73,6 +98,11 @@ public class Tank {
   private static final int PX = 5;
   private static final int PX1 = 5;
   private Direct direct;
+
+  public Direct getDirect() {
+    return direct;
+  }
+
   /**
    * 坦克的状态：静止 false 移动true
    */
@@ -216,7 +246,7 @@ public class Tank {
    *
    * @param tank tank
    */
-  public boolean collideWith(Tank tank) {
+  private boolean collideWith(Tank tank) {
     this.rectangle.x = this.x;
     this.rectangle.y = this.y;
     //更新自己的rectangle
@@ -246,7 +276,7 @@ public class Tank {
   /**
    * 验证坦克之间是否重合，重合不移动
    */
-  public boolean canMove() {
+  private boolean canMove() {
     ArrayList<Tank> enemies = tf.getEnemies();
     Tank userTank = tf.getTank();
     boolean result = false;
@@ -331,7 +361,7 @@ public class Tank {
    * 开炮
    */
   void fire() {
-    tf.getBullets().add(new Bullet(getBulletX(), getBulletY(), direct, this.group));
+    fs.fire();
   }
 
   private static final int AUTO_FILE_LIMIT = 99;
@@ -342,7 +372,7 @@ public class Tank {
    */
   void autoFire() {
     if (random.nextInt(AUTO_FILE_LIMIT) == AUTO_FILE_LIMIT_SEED) {
-      tf.getBullets().add(new Bullet(getBulletX(), getBulletY(), direct, this.group));
+      this.fs.fire();
     }
   }
 
