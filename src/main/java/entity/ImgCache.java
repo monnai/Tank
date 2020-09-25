@@ -13,11 +13,14 @@ public class ImgCache {
   /**
    * 好坦克图片
    */
-  public static BufferedImage lTank, uTank, rTank, dTank;
+  static BufferedImage lTank;
+  static BufferedImage uTank;
+  static BufferedImage rTank;
+  public static BufferedImage dTank;
   /**
    * 坏坦克图片
    */
-  public static BufferedImage bdlTank, bduTank, bdrTank, bddTank;
+  static BufferedImage bdlTank, bduTank, bdrTank, bddTank;
   /**
    * 子弹图片
    */

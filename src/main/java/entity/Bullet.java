@@ -1,10 +1,10 @@
 package entity;
 
+import entity.abst.AbstractTank;
 import enums.Direct;
 import enums.Group;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import t1.Tank;
 import t1.TankFrame;
 
 /**
@@ -107,7 +107,7 @@ public class Bullet {
    *
    * @param tank tank
    */
-  public boolean collideWith(Tank tank) {
+  public boolean collideWith(AbstractTank tank) {
     //区分敌我，同方子弹不造成伤害
     if (this.group == tank.getGroup()) {
       return false;

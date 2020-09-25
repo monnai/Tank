@@ -1,2 +1,4 @@
 tank.number=8
 tank.speed=5
+Factory-Normal=factory.NormalFactory
+Factory-Default=factory.DefaultFactory
