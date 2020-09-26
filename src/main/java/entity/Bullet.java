@@ -1,11 +1,12 @@
 package entity;
 
+import conf.ImgCache;
 import enums.Direct;
 import enums.Group;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import t1.Tank;
-import t1.TankFrame;
+import model.GameModel;
+import view.TankFrame;
 
 /**
  * @author gu.sc
@@ -40,16 +41,16 @@ public class Bullet {
    */
   private int x, y;
 
-  private TankFrame tf;
+  private GameModel gm;
 
-  public Bullet(int x, int y, Direct direct, Group group, TankFrame tf) {
+  public Bullet(int x, int y, Direct direct, Group group, GameModel gm) {
     this.x = x;
     this.y = y;
     this.direct = direct;
     this.group = group;
-    this.tf = tf;
+    this.gm = gm;
     //初始化时加入容器
-    this.tf.getBullets().add(this);
+    this.gm.getBullets().add(this);
   }
 
   private Group group;

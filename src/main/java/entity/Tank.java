@@ -1,11 +1,8 @@
-package t1;
+package entity;
 
-import bulletstrategy.DefaultFireStrategy;
 import bulletstrategy.FireStrategy;
-import bulletstrategy.FourDirectFireStrategy;
+import conf.ImgCache;
 import conf.TankConf;
-import entity.Bullet;
-import entity.ImgCache;
 import enums.Direct;
 import enums.Group;
 import java.awt.Graphics;
@@ -13,6 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
+import model.GameModel;
+import view.TankFrame;
 
 /**
  * @author gu.sc
@@ -21,21 +20,21 @@ public class Tank {
 
   private boolean living = true;
 
-  boolean getLiving() {
+  public boolean getLiving() {
     return this.living;
   }
 
-  Tank(int x, int y, Direct direct, TankFrame tf, Group group) {
+  public Tank(int x, int y, Direct direct, Group group) {
     this.x = x;
     this.y = y;
     this.direct = direct;
-    this.tf = tf;
+    this.gm = GameModel.getInstance();
     this.group = group;
     if (this.group == Group.GOOD) {
       String clazz = TankConf.getString("FourDirectFireStrategy");
       try {
         Class<?> fsClazz = Class.forName(clazz);
-        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class,TankFrame.class).newInstance(this,tf);
+        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class).newInstance(this);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -43,14 +42,14 @@ public class Tank {
       String clazz = TankConf.getString("DefaultFireStrategy");
       try {
         Class<?> fsClazz = Class.forName(clazz);
-        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class,TankFrame.class).newInstance(this,tf);
+        this.fs = (FireStrategy) fsClazz.getConstructor(Tank.class).newInstance(this);
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
   }
 
-  private TankFrame tf;
+  private GameModel gm;
   /**
    * 发射子弹策略
    */
@@ -142,7 +141,7 @@ public class Tank {
    *
    * @param e 键盘点击事件
    */
-  void changeDirection(KeyEvent e) {
+  public void changeDirection(KeyEvent e) {
     int code = e.getKeyCode();
     moving = true;
     switch (code) {
@@ -166,7 +165,7 @@ public class Tank {
 //    moving = true;
   }
 
-  void autoChangeDirection() {
+  public void autoChangeDirection() {
     moving = true;
     int code = new Random().nextInt(12);
     switch (code) {
@@ -277,9 +276,8 @@ public class Tank {
    * 验证坦克之间是否重合，重合不移动
    */
   private boolean canMove() {
-    ArrayList<Tank> enemies = tf.getEnemies();
-    Tank userTank = tf.getTank();
-    boolean result = false;
+    ArrayList<Tank> enemies = gm.getEnemies();
+    Tank userTank = gm.getTank();
     //敌方坦克进行判断，如果和userTank碰撞了直接return
     //如果不是user 先用自己和user比一下，看碰撞了吗
     if (this != userTank) {
@@ -302,11 +300,11 @@ public class Tank {
   /**
    * 和键盘抬起后停止
    */
-  void stop() {
+  public void stop() {
     this.moving = false;
   }
 
-  void paint(Graphics g) {
+  public void paint(Graphics g) {
     //根据方向渲染坦克
     if (!this.living) {
       return;
@@ -360,7 +358,7 @@ public class Tank {
   /**
    * 开炮
    */
-  void fire() {
+  public void fire() {
     fs.fire();
   }
 
@@ -370,7 +368,7 @@ public class Tank {
   /**
    * 自动开炮 1/3概率
    */
-  void autoFire() {
+  public void autoFire() {
     if (random.nextInt(AUTO_FILE_LIMIT) == AUTO_FILE_LIMIT_SEED) {
       this.fs.fire();
     }

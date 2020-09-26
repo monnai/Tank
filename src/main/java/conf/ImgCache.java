@@ -1,4 +1,4 @@
-package entity;
+package conf;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -21,11 +21,11 @@ public class ImgCache {
   /**
    * 子弹图片
    */
-  static BufferedImage lBullet, uBullet, rBullet, dBullet;
+ public static BufferedImage lBullet, uBullet, rBullet, dBullet;
   /**
    * 爆炸图片
    */
-  static BufferedImage[] explodes = new BufferedImage[16];
+  public static BufferedImage[] explodes = new BufferedImage[16];
 
   static {
     try {

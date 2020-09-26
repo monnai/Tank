@@ -2,8 +2,8 @@ package bulletstrategy;
 
 import entity.Bullet;
 import enums.Direct;
-import t1.Tank;
-import t1.TankFrame;
+import entity.Tank;
+import model.GameModel;
 
 /**
  * @author gu.sc
@@ -11,20 +11,20 @@ import t1.TankFrame;
 public class FourDirectFireStrategy implements FireStrategy {
 
   private Tank tank;
-  private TankFrame tf;
+  private GameModel gm;
 
-  public FourDirectFireStrategy(Tank tank, TankFrame tf) {
+  public FourDirectFireStrategy(Tank tank ) {
     this.tank = tank;
-    this.tf = tf;
+    this.gm = GameModel.getInstance();
   }
 
   @Override
   public void fire() {
     int a =  tank.getwidth() /4;
     int b =  tank.getheight() /4;
-    new Bullet(tank.getX()+a, tank.getY()+b, Direct.left, tank.getGroup(), this.tf);
-    new Bullet(tank.getX()+a, tank.getY()+b, Direct.up, tank.getGroup(), this.tf);
-    new Bullet(tank.getX()+a, tank.getY()+b, Direct.right, tank.getGroup(), this.tf);
-    new Bullet(tank.getX()+a, tank.getY()+b, Direct.down, tank.getGroup(), this.tf);
+    new Bullet(tank.getX()+a, tank.getY()+b, Direct.left, tank.getGroup(), this.gm);
+    new Bullet(tank.getX()+a, tank.getY()+b, Direct.up, tank.getGroup(), this.gm);
+    new Bullet(tank.getX()+a, tank.getY()+b, Direct.right, tank.getGroup(), this.gm);
+    new Bullet(tank.getX()+a, tank.getY()+b, Direct.down, tank.getGroup(), this.gm);
   }
 }

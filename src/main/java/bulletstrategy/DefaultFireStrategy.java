@@ -1,8 +1,8 @@
 package bulletstrategy;
 
 import entity.Bullet;
-import t1.Tank;
-import t1.TankFrame;
+import entity.Tank;
+import model.GameModel;
 
 /**
  * @author gu.sc
@@ -10,15 +10,15 @@ import t1.TankFrame;
 public class DefaultFireStrategy implements FireStrategy {
 
   private Tank tank;
-  private TankFrame tf;
+  private GameModel gm;
 
-  public DefaultFireStrategy(Tank tank, TankFrame tf) {
+  public DefaultFireStrategy(Tank tank) {
     this.tank = tank;
-    this.tf = tf;
+    this.gm = GameModel.getInstance();
   }
 
   @Override
   public void fire() {
-    new Bullet(tank.getX(), tank.getY(), tank.getDirect(), tank.getGroup(), tf);
+    new Bullet(tank.getX(), tank.getY(), tank.getDirect(), tank.getGroup(), gm);
   }
 }

@@ -1,7 +1,7 @@
 package entity;
 
+import conf.ImgCache;
 import java.awt.Graphics;
-import t1.TankFrame;
 
 /**
  * @author gu.sc
