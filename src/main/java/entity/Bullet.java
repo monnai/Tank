@@ -1,6 +1,7 @@
 package entity;
 
 import conf.ImgCache;
+import conf.TankConf;
 import enums.Direct;
 import enums.Group;
 import java.awt.Graphics;
@@ -11,59 +12,28 @@ import view.TankFrame;
 /**
  * @author gu.sc
  */
-public class Bullet {
+public class Bullet extends BaseMovableGameObject {
 
-  /**
-   * The direction of bullet's move
-   */
-  private Direct direct;
-  /**
-   * The speed of bullet's move
-   */
-  private static final int SPEED = 10;
-  /**
-   * bullet's weight and height
-   */
-  public static int
-      HEIGHT = ImgCache.dBullet.getHeight(),
-      WIDTH = ImgCache.dBullet.getWidth();
-  /**
-   * live or death
-   */
-  private boolean living = true;
-
-  public boolean getLiving() {
-    return this.living;
-  }
-
-  /**
-   * bullet's coordinates
-   */
-  private int x, y;
-
-  private GameModel gm;
-
-  public Bullet(int x, int y, Direct direct, Group group, GameModel gm) {
-    this.x = x;
-    this.y = y;
-    this.direct = direct;
-    this.group = group;
-    this.gm = gm;
-    //初始化时加入容器
-    this.gm.getBullets().add(this);
+  {
+    WIDTH = ImgCache.dBullet.getWidth();
+    HEIGHT = ImgCache.dBullet.getHeight();
+    rectangle = new Rectangle(WIDTH, HEIGHT);
+    gm = GameModel.getInstance();
+    SPEED = TankConf.getInt("bullet.speed");
   }
 
   private Group group;
 
-  /**
-   * bullet碰撞检测图型
-   */
-  private Rectangle rectangle = new Rectangle(WIDTH, HEIGHT);
+  public Bullet(int x, int y, Direct direct, Group group) {
+    super.x = x;
+    super.y = y;
+    //初始化时加入容器
+    gm.getBullets().add(this);
+    this.direct = direct;
+    this.group = group;
+  }
 
-
-  /**
-   * paint itself
-   */
+  @Override
   public void paint(Graphics g) {
     switch (direct) {
       case up:
@@ -84,32 +54,16 @@ public class Bullet {
     move();
   }
 
-  private void move() {
-    //静止状态直接返回
-    switch (direct) {
-      case left:
-        x -= SPEED;
-        break;
-      case right:
-        x += SPEED;
-        break;
-      case up:
-        y -= SPEED;
-        break;
-      case down:
-        y += SPEED;
-        break;
-      default:
-        break;
-    }
-    //增加越界处理：集合中
+  public void move() {
+    super.move(SPEED);
+    //到达界面边界，消除该bullet
     if (x < 0 | x > TankFrame.WIDTH | y < 0 | y > TankFrame.HEIGHT) {
       die();
     }
   }
 
   /**
-   * 碰撞检验
+   * 碰撞检验 todo:责任链模式优化
    *
    * @param tank tank
    */
@@ -119,13 +73,13 @@ public class Bullet {
       return false;
     }
     //更新子弹的rectangle
-    this.rectangle.x = x;
-    this.rectangle.y = y;
+    rectangle.x = x;
+    rectangle.y = y;
     //更新坦克的rectangle
-    Rectangle rectangle = tank.getRectangle();
-    rectangle.x = tank.getX();
-    rectangle.y = tank.getY();
-    if (this.rectangle.intersects(rectangle)) {
+    Rectangle rectangle = tank.rectangle;
+    rectangle.x = tank.x;
+    rectangle.y = tank.y;
+    if (super.rectangle.intersects(rectangle)) {
       tank.die();
       this.die();
       return true;
@@ -133,10 +87,4 @@ public class Bullet {
     return false;
   }
 
-  /**
-   * 子弹死掉
-   */
-  private void die() {
-    this.living = false;
-  }
 }

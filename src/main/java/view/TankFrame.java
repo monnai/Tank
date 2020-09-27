@@ -1,5 +1,7 @@
 package view;
 
+import static model.GameModel.getInstance;
+
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -20,7 +22,7 @@ public class TankFrame extends Frame {
 
   public static int WIDTH = 800;
   public static int HEIGHT = 600;
-  private GameModel gm = GameModel.getInstance();
+  private GameModel gm = getInstance();
 
   class MyKeyListener extends KeyAdapter {
 
@@ -32,6 +34,7 @@ public class TankFrame extends Frame {
         gm.getTank().fire();
       }
     }
+
     @Override
     public void keyReleased(KeyEvent e) {
       gm.getTank().stop();
@@ -89,7 +92,7 @@ public class TankFrame extends Frame {
   @Override
   public void paint(Graphics g) {
     gm.init();
-    this.gm.paint(g);
+    gm.paint(g);
   }
 
 

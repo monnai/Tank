@@ -1,5 +1,6 @@
 package model;
 
+import com.sun.org.apache.xpath.internal.functions.FuncFalse;
 import conf.TankConf;
 import entity.Bullet;
 import entity.Explode;
@@ -45,7 +46,7 @@ public class GameModel {
   }
 
   private void rejectBullets() {
-    bullets.removeIf(bullet -> !bullet.getLiving());
+    bullets.removeIf(bullet -> !bullet.living);
   }
 
   /**
@@ -67,7 +68,7 @@ public class GameModel {
   }
 
   private void rejectTanks() {
-    enemies.removeIf(enemy -> !enemy.getLiving());
+    enemies.removeIf(enemy -> !enemy.living);
   }
 
   /**
@@ -87,6 +88,7 @@ public class GameModel {
   public void init() {
     if (!initialized.get()) {
       tank = new Tank(200, 400, Direct.down, Group.GOOD);
+      tank.moving = false;
       for (int i = 0; i < TankConf.getInt("tank.number"); i++) {
         this.enemies.add(new Tank(50 + i * 80, 200, Direct.down, Group.BAD));
       }
@@ -95,36 +97,39 @@ public class GameModel {
   }
 
   public void paint(Graphics g) {
-    //控制的坦克
-    tank.paint(g);
     Color before = g.getColor();
     g.setColor(Color.RED);
-    //显示子弹数
-    g.drawString("子弹数：\t" + this.bullets.size(), 10, 60);
+    //sum
+//    g.drawString("子弹数：\t" + this.bullets.size(), 10, 60);
+//    g.drawString("敌人数：\t" + enemies.size(), 10, 80);
+//    g.drawString("爆炸数：\t" + explodes.size(), 10, 100);
     g.setColor(before);
-    //敌人们画出来
+    //my tank paint
+    tank.paint(g);
+    //tanks paint
     enemies.forEach(tank -> tank.paint(g));
-
+    //bullets paint
+    bullets.forEach(x -> x.paint(g));
+    //explodes paint
+    explodes.forEach(explode -> explode.paint(g));
     for (Tank enemy : enemies) {
       //敌人随机打子弹，运动
       enemy.autoChangeDirection();
       enemy.autoFire();
       //碰撞检验
       for (Bullet bullet : bullets) {
+        //todo 拆子弹和敌方坦克比较
         if (bullet.collideWith(enemy)) {
-          explodes.add(new Explode(enemy.getX() + enemy.getwidth() / 2 - Explode.WIDTH / 2,
-              enemy.getY() + enemy.getheight() / 2 - Explode.HEIGHT / 2));
+          //如果碰撞，形成爆炸
+          explodes.add(new Explode(enemy.x + enemy.WIDTH / 2 - Explode.WIDTH / 2,
+              enemy.y + enemy.HEIGHT / 2 - Explode.HEIGHT / 2));
           break;
         }
       }
     }
-    //渲染子弹
-    bullets.forEach(x -> x.paint(g));
     //剔除越界的子弹
     this.rejectBullets();
     this.rejectTanks();
-    //爆炸
-    explodes.forEach(explode -> explode.paint(g));
     this.rejectExplode();
   }
 }

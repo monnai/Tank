@@ -10,25 +10,38 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
-import model.GameModel;
 import view.TankFrame;
 
 /**
  * @author gu.sc
  */
-public class Tank {
+public class Tank extends BaseMovableGameObject {
 
-  private boolean living = true;
+  {
+    WIDTH = ImgCache.dTank.getWidth();
+    HEIGHT = ImgCache.dTank.getHeight();
+    rectangle = new Rectangle(WIDTH, HEIGHT);
+  }
 
-  public boolean getLiving() {
-    return this.living;
+
+  /**
+   * 敌我区分标志
+   */
+  private Group group;
+
+  /**
+   * 发射子弹策略
+   */
+  private FireStrategy fs;
+
+  public Group getGroup() {
+    return this.group;
   }
 
   public Tank(int x, int y, Direct direct, Group group) {
-    this.x = x;
-    this.y = y;
-    this.direct = direct;
-    this.gm = GameModel.getInstance();
+    super.x = x;
+    super.y = y;
+    super.direct = direct;
     this.group = group;
     if (this.group == Group.GOOD) {
       String clazz = TankConf.getString("FourDirectFireStrategy");
@@ -47,94 +60,20 @@ public class Tank {
         e.printStackTrace();
       }
     }
+    SPEED = TankConf.getInt("tank.speed");
   }
 
-  private GameModel gm;
-  /**
-   * 发射子弹策略
-   */
-  private FireStrategy fs;
-
-  /**
-   * 初始横纵坐标
-   */
-  private int x, y;
-
-  public int getX() {
-    return this.x;
-  }
-
-  public int getY() {
-    return this.y;
-  }
-
-  private int getBulletX() {
-    return this.x + this.WIDTH / 2 - Bullet.WIDTH / 2;
-  }
-
-  private int getBulletY() {
-    return this.y + this.WIDTH / 2 - Bullet.HEIGHT / 2;
-  }
-
-  /**
-   * 方块的长和宽
-   */
-  private final int
-      WIDTH = ImgCache.dTank.getWidth(),
-      HEIGHT = ImgCache.dTank.getHeight();
-
-  public int getwidth() {
-    return this.WIDTH;
-  }
-
-  public int getheight() {
-    return this.HEIGHT;
-  }
 
   /**
    * 移动像素 默认5px
    */
   private static final int PX = 5;
-  private static final int PX1 = 5;
-  private Direct direct;
 
   public Direct getDirect() {
     return direct;
   }
 
-  /**
-   * 坦克的状态：静止 false 移动true
-   */
-  private boolean moving;
-
-  /**
-   * 敌我区分标志
-   */
-  private Group group;
-
-  public Group getGroup() {
-    return this.group;
-  }
-
   private Random random = new Random();
-
-  /**
-   * 设置方向
-   *
-   * @param direct 键盘方向
-   */
-  private void setDirect(Direct direct) {
-    this.direct = direct;
-  }
-
-  /**
-   * 碰撞检测图形
-   */
-  private Rectangle rectangle = new Rectangle(WIDTH, HEIGHT);
-
-  public Rectangle getRectangle() {
-    return this.rectangle;
-  }
 
   /**
    * 改变tank移动的方向
@@ -161,8 +100,6 @@ public class Tank {
         moving = false;
         break;
     }
-    //bug : 任意键触发后，都移动
-//    moving = true;
   }
 
   public void autoChangeDirection() {
@@ -192,33 +129,19 @@ public class Tank {
     }
   }
 
-  /**
-   * 坦克移动 ，根据变量direct的方向 ，更改横纵坐标
-   */
-  private void move() {
+  @Override
+  public void move(int speed) {
     //静止状态直接返回
     if (!moving) {
       return;
     }
+    //不能够移动直接返回
     if (!canMove()) {
       return;
     }
-    switch (direct) {
-      case left:
-        x -= PX;
-        break;
-      case right:
-        x += PX;
-        break;
-      case up:
-        y -= PX;
-        break;
-      case down:
-        y += PX;
-        break;
-      default:
-        break;
-    }
+    super.move(speed);
+    //墙壁碰撞
+    //todo 责任链优化
     boundaryCheck();
   }
 
@@ -251,24 +174,24 @@ public class Tank {
     //更新自己的rectangle
     switch (direct) {
       case left:
-        this.rectangle.x -= PX1;
+        this.rectangle.x -= PX;
         break;
       case right:
-        this.rectangle.x += PX1;
+        this.rectangle.x += PX;
         break;
       case up:
-        this.rectangle.y -= PX1;
+        this.rectangle.y -= PX;
         break;
       case down:
-        this.rectangle.y += PX1;
+        this.rectangle.y += PX;
         break;
       default:
         break;
     }
     //更新其他坦克的rectangle
-    Rectangle rectangle = tank.getRectangle();
-    rectangle.x = tank.getX();
-    rectangle.y = tank.getY();
+    Rectangle rectangle = tank.rectangle;
+    rectangle.x = tank.x;
+    rectangle.y = tank.y;
     return this.rectangle.intersects(rectangle);
   }
 
@@ -304,6 +227,7 @@ public class Tank {
     this.moving = false;
   }
 
+  @Override
   public void paint(Graphics g) {
     //根据方向渲染坦克
     if (!this.living) {
@@ -326,10 +250,6 @@ public class Tank {
         default:
           break;
       }
-     /* Color before = g.getColor();
-      g.setColor(Color.yellow);
-      g.fillRect(x, y, WIDTH, HEIGHT);
-      g.setColor(before);*/
     } else {
       switch (direct) {
         case left:
@@ -347,12 +267,8 @@ public class Tank {
         default:
           break;
       }
-    /*  Color before = g.getColor();
-      g.setColor(Color.yellow);
-      g.fillRect(x, y, WIDTH, HEIGHT);
-      g.setColor(before);*/
     }
-    move();
+    move(SPEED);
   }
 
   /**
@@ -374,8 +290,5 @@ public class Tank {
     }
   }
 
-  public void die() {
-    this.living = false;
-  }
 
 }
