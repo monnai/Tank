@@ -4,6 +4,7 @@ import collider.BulletTankCollider;
 import collider.ColliderChain;
 import collider.TankTankCollider;
 import collider.WallBulletCollider;
+import collider.WallTankCollider;
 import conf.TankConf;
 import entity.BaseGameObject;
 import entity.Tank;
@@ -80,13 +81,14 @@ public class GameModel {
         this.gos.add(new Tank(50 + i * 80, 200, Direct.down, Group.BAD));
       }
       //加入墙
-//      Wall wall = new Wall(33, 55, 124, 20);
-//      this.gos.add(wall);
+      Wall wall = new Wall(33, 55, 124, 20);
+      this.gos.add(wall);
       this.gos.add(tank);
       initialized.set(true);
       colliderChain.add(new BulletTankCollider());
       colliderChain.add(new TankTankCollider());
-//      colliderChain.add(new WallBulletCollider());
+      colliderChain.add(new WallBulletCollider());
+      colliderChain.add(new WallTankCollider());
     }
   }
 
