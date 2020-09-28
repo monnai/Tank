@@ -11,10 +11,10 @@ import model.GameModel;
  */
 public abstract class BaseGameObject {
 
-  public boolean living = true;
-  public int WIDTH;
-  public int HEIGHT;
-  Rectangle rectangle;
+  boolean living = true;
+  int width;
+  int height;
+  public Rectangle rectangle;
 
 
   GameModel gm = GameModel.getInstance();
@@ -34,8 +34,21 @@ public abstract class BaseGameObject {
   /**
    * 在碰撞后，将living属性设置为false （默认为true）
    */
-  void die() {
+  public void die() {
     this.living = false;
   }
 
+  /**
+   * 是否应该被剔除
+   * @return true 如果应该被剔除
+   */
+  public abstract boolean showReject();
+
+  /**
+   * 修改x和y的时候需要修改rectangle
+   */
+  void refreshRectangle() {
+    rectangle.x = x;
+    rectangle.y = y;
+  }
 }

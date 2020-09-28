@@ -7,6 +7,7 @@ public interface Movable {
 
   /**
    * 移动
+   * @param speed 速度
    */
   void move(int speed);
 }

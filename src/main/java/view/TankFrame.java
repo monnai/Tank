@@ -22,7 +22,7 @@ public class TankFrame extends Frame {
 
   public static int WIDTH = 800;
   public static int HEIGHT = 600;
-  private GameModel gm = getInstance();
+  private static GameModel gm = getInstance();
 
   class MyKeyListener extends KeyAdapter {
 

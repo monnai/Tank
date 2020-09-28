@@ -10,31 +10,33 @@ import model.GameModel;
 import view.TankFrame;
 
 /**
+ * 子弹类
+ *
  * @author gu.sc
  */
 public class Bullet extends BaseMovableGameObject {
 
   {
-    WIDTH = ImgCache.dBullet.getWidth();
-    HEIGHT = ImgCache.dBullet.getHeight();
-    rectangle = new Rectangle(WIDTH, HEIGHT);
+    width = ImgCache.dBullet.getWidth();
+    height = ImgCache.dBullet.getHeight();
     gm = GameModel.getInstance();
     SPEED = TankConf.getInt("bullet.speed");
   }
 
-  private Group group;
 
   public Bullet(int x, int y, Direct direct, Group group) {
     super.x = x;
     super.y = y;
-    //初始化时加入容器
-    gm.getBullets().add(this);
     this.direct = direct;
     this.group = group;
+    //初始化时加入容器
+    rectangle = new Rectangle(x,y, width, height);
+    gm.getGos().add(this);
   }
 
   @Override
   public void paint(Graphics g) {
+    //根据方向获取图片进行绘制
     switch (direct) {
       case up:
         g.drawImage(ImgCache.uBullet, x, y, null);
@@ -54,37 +56,25 @@ public class Bullet extends BaseMovableGameObject {
     move();
   }
 
-  public void move() {
-    super.move(SPEED);
-    //到达界面边界，消除该bullet
-    if (x < 0 | x > TankFrame.WIDTH | y < 0 | y > TankFrame.HEIGHT) {
-      die();
-    }
+  /**
+   * 是否消除该子弹。如果living是false就从gos集合中移除掉
+   *
+   * @return true如果子弹死掉了
+   */
+  @Override
+  public boolean showReject() {
+    return !this.living;
   }
 
   /**
-   * 碰撞检验 todo:责任链模式优化
-   *
-   * @param tank tank
+   * 移动子弹
    */
-  public boolean collideWith(Tank tank) {
-    //区分敌我，同方子弹不造成伤害
-    if (this.group == tank.getGroup()) {
-      return false;
+  private void move() {
+    super.move(SPEED);
+    //到达界面边界，消除该bullet由于边界还不是物体，没有加入到链子中统一处理
+    if (x < 0 | x > TankFrame.WIDTH | y < 0 | y > TankFrame.HEIGHT) {
+      die();
     }
-    //更新子弹的rectangle
-    rectangle.x = x;
-    rectangle.y = y;
-    //更新坦克的rectangle
-    Rectangle rectangle = tank.rectangle;
-    rectangle.x = tank.x;
-    rectangle.y = tank.y;
-    if (super.rectangle.intersects(rectangle)) {
-      tank.die();
-      this.die();
-      return true;
-    }
-    return false;
   }
 
 }

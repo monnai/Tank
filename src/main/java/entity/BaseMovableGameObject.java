@@ -1,6 +1,7 @@
 package entity;
 
 import enums.Direct;
+import enums.Group;
 
 /**
  * @author gu.sc
@@ -9,11 +10,13 @@ public abstract class BaseMovableGameObject extends BaseGameObject implements Mo
 
   Direct direct;
 
-  public int SPEED;
+  int SPEED;
 
   public boolean moving = true;
 
-  public void setDirect(Direct direct) {
+  public Group group;
+
+  void setDirect(Direct direct) {
     this.direct = direct;
   }
 
@@ -35,5 +38,7 @@ public abstract class BaseMovableGameObject extends BaseGameObject implements Mo
       default:
         break;
     }
+    rectangle.x = x;
+    rectangle.y = y;
   }
 }

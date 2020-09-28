@@ -10,4 +10,5 @@ public interface FireStrategy {
    * 发射子弹
    */
   void fire();
+
 }

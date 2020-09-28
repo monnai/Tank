@@ -10,18 +10,21 @@ import entity.Tank;
 public class FourDirectFireStrategy implements FireStrategy {
 
   private Tank tank;
+  private int x_;
+  private int y_;
 
   public FourDirectFireStrategy(Tank tank) {
     this.tank = tank;
+    x_ = Tank.WIDTH >> 2;
+    y_ = Tank.HEIGHT >> 2;
   }
 
   @Override
   public void fire() {
-    int a = tank.WIDTH / 4;
-    int b = tank.HEIGHT / 4;
-    new Bullet(tank.x + a, tank.y + b, Direct.left, tank.getGroup());
-    new Bullet(tank.x + a, tank.y + b, Direct.up, tank.getGroup());
-    new Bullet(tank.x + a, tank.y + b, Direct.right, tank.getGroup());
-    new Bullet(tank.x + a, tank.y + b, Direct.down, tank.getGroup());
+
+    new Bullet(tank.x + x_, tank.y + y_, Direct.left, tank.group);
+    new Bullet(tank.x + x_, tank.y + y_, Direct.up, tank.group);
+    new Bullet(tank.x + x_, tank.y + y_, Direct.right, tank.group);
+    new Bullet(tank.x + x_, tank.y + y_, Direct.down, tank.group);
   }
 }

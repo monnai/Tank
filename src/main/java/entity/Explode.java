@@ -4,21 +4,18 @@ import conf.ImgCache;
 import java.awt.Graphics;
 
 /**
+ * 爆炸
+ *
  * @author gu.sc
  */
 public class Explode extends BaseGameObject {
 
-  public static int WIDTH = ImgCache.explodes[0].getWidth();
-  public static int HEIGHT = ImgCache.explodes[0].getHeight();
+  private int index;
+
   public Explode(int x, int y) {
     this.x = x;
     this.y = y;
-  }
-
-  private int index;
-
-  public int getIndex() {
-    return this.index;
+    gm.getGos().add(this);
   }
 
 
@@ -28,6 +25,11 @@ public class Explode extends BaseGameObject {
     if (++index == ImgCache.explodes.length) {
       index = -1;
     }
+  }
+
+  @Override
+  public boolean showReject() {
+    return this.index == -1;
   }
 
 }
